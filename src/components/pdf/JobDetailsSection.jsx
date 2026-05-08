@@ -4,7 +4,12 @@ import EvidenceGallery from "./EvidenceGallery";
 const fmt = (v) =>
   `$${v.toLocaleString("en-AU", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-export default function JobDetailsSection({ jobs, alkimosJobs }) {
+export default function JobDetailsSection({ jobs, alkimosJobs, settings = {} }) {
+  const {
+    showMeasurementPricing = true,
+    showEvidencePhotos = true,
+  } = settings;
+
   const allJobs = [
     ...jobs.map((j) => ({ ...j, _type: "weighed" })),
     ...alkimosJobs.map((j) => ({ ...j, _type: "alkimos" })),
@@ -56,7 +61,7 @@ export default function JobDetailsSection({ jobs, alkimosJobs }) {
           </div>
 
           {/* Weights / pricing */}
-          {job._type === "weighed" ? (
+          {job._type === "weighed" && !showMeasurementPricing ? null : job._type === "weighed" ? (
             <div className="px-5 py-4">
               <p className="text-[9px] font-bold text-[#9CA3AF] uppercase tracking-[0.1em] mb-3">Measurement & Pricing</p>
               {/* Weight row */}
@@ -96,7 +101,7 @@ export default function JobDetailsSection({ jobs, alkimosJobs }) {
                   <p className="text-[16px] font-bold text-white">{fmt(job.netPayable)}</p>
                 </div>
               </div>
-              <EvidenceGallery evidence={job.evidence} jobRef={job.jobRef} />
+              {showEvidencePhotos && <EvidenceGallery evidence={job.evidence} jobRef={job.jobRef} />}
             </div>
           ) : (
             <div className="px-5 py-4">
@@ -105,7 +110,7 @@ export default function JobDetailsSection({ jobs, alkimosJobs }) {
                 <p className="text-[10px] text-[#8FA8C8]">Bin placement / delivery service charge incl. GST</p>
                 <p className="text-[16px] font-bold text-white">–${job.serviceCharge.toFixed(2)}</p>
               </div>
-              <EvidenceGallery evidence={job.evidence} jobRef={job.jobRef} />
+              {showEvidencePhotos && <EvidenceGallery evidence={job.evidence} jobRef={job.jobRef} />}
             </div>
           )}
         </div>

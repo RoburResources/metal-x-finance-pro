@@ -4,24 +4,30 @@ import { supplierDetails, companyDetails } from "@/lib/paymentPackData";
 const fmt = (v) =>
   `$${v.toLocaleString("en-AU", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-export default function PaymentSummaryTable({ pack }) {
+export default function PaymentSummaryTable({ pack, settings = {} }) {
+  const {
+    showRCTIDetails = true,
+    showRemittanceEvidence = true,
+  } = settings;
   const s = pack.summary;
 
   return (
     <div className="px-10 pb-6 space-y-6">
       {/* RCTI */}
-      <div className="border border-[#E2E8F0] rounded-xl overflow-hidden">
-        <div className="px-5 py-4 border-b border-[#E2E8F0]">
-          <p className="text-[9px] font-bold text-[#1E4D99] uppercase tracking-[0.12em]">RCTI Details</p>
+      {showRCTIDetails && (
+        <div className="border border-[#E2E8F0] rounded-xl overflow-hidden">
+          <div className="px-5 py-4 border-b border-[#E2E8F0]">
+            <p className="text-[9px] font-bold text-[#1E4D99] uppercase tracking-[0.12em]">RCTI Details</p>
+          </div>
+          <div className="divide-y divide-[#F3F4F6]">
+            <RctiRow label="Supplier" value={`${supplierDetails.legalName} — ABN ${supplierDetails.abn}`} />
+            <RctiRow label="Recipient / payer" value={`${companyDetails.name} — ABN ${companyDetails.abn}`} />
+            <RctiRow label="Payment pack" value={pack.id} />
+            <RctiRow label="GST treatment" value="GST inclusive" />
+            <RctiRow label="Weekly total" value={fmt(s.calculatedNetPayable)} bold />
+          </div>
         </div>
-        <div className="divide-y divide-[#F3F4F6]">
-          <RctiRow label="Supplier" value={`${supplierDetails.legalName} — ABN ${supplierDetails.abn}`} />
-          <RctiRow label="Recipient / payer" value={`${companyDetails.name} — ABN ${companyDetails.abn}`} />
-          <RctiRow label="Payment pack" value={pack.id} />
-          <RctiRow label="GST treatment" value="GST inclusive" />
-          <RctiRow label="Weekly total" value={fmt(s.calculatedNetPayable)} bold />
-        </div>
-      </div>
+      )}
 
       {/* Payment summary */}
       <div className="border border-[#E2E8F0] rounded-xl overflow-hidden">
@@ -41,7 +47,7 @@ export default function PaymentSummaryTable({ pack }) {
       </div>
 
       {/* Remittance evidence */}
-      {pack.remittance && (
+      {showRemittanceEvidence && pack.remittance && (
         <div className="border border-[#E2E8F0] rounded-xl overflow-hidden">
           <div className="px-5 py-4 border-b border-[#E2E8F0]">
             <p className="text-[9px] font-bold text-[#1E4D99] uppercase tracking-[0.12em]">Remittance Evidence</p>

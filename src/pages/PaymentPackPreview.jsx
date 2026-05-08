@@ -1,31 +1,28 @@
 import React, { useState } from "react";
 import { paymentPacks } from "@/lib/paymentPackData";
+import { defaultSettings } from "@/lib/pdfSettings";
 import PackSelector from "@/components/pdf/PackSelector";
 import SinglePackPreview from "@/components/pdf/SinglePackPreview";
 import GrandSummaryPreview from "@/components/pdf/GrandSummaryPreview";
+import PDFSettingsPanel from "@/components/pdf/PDFSettingsPanel";
+import ValidationBanner from "@/components/pdf/ValidationBanner";
 import { Button } from "@/components/ui/button";
-import { Download, FileText, Printer } from "lucide-react";
+import { Download, FileText, Printer, Settings2 } from "lucide-react";
 
 export default function PaymentPackPreview() {
   const [selectedPackId, setSelectedPackId] = useState("00103");
+  const [settings, setSettings] = useState(defaultSettings);
+  const [showSettings, setShowSettings] = useState(false);
+
   const selectedPack = paymentPacks.find((p) => p.id === selectedPackId);
 
-  const handlePrint = () => {
-    window.print();
-  };
-
-  // Download PDF: use the browser's built-in print-to-PDF dialog,
-  // which correctly handles page breaks via CSS (page-break-inside: avoid).
-  const handleDownloadPDF = () => {
-    window.print();
-  };
+  const handlePrint = () => window.print();
+  const handleDownloadPDF = () => window.print();
 
   return (
     <>
-      {/* Print styles injected into <head> via a style tag */}
       <style>{`
         @media print {
-          /* Hide everything except the preview */
           body > * { display: none !important; }
           #print-root { display: block !important; }
 
@@ -34,28 +31,17 @@ export default function PaymentPackPreview() {
             margin: 0;
           }
 
-          /* Each job card must not split across pages */
           .pdf-job-card {
             page-break-inside: avoid;
             break-inside: avoid;
           }
 
-          /* Each top-level section should avoid splitting */
           .pdf-section {
             page-break-inside: avoid;
             break-inside: avoid;
           }
 
-          /* Force a page break before the payment summary */
-          .pdf-page-break-before {
-            page-break-before: always;
-            break-before: always;
-          }
-
-          /* Remove shadows/overflow for print */
           .shadow-xl { box-shadow: none !important; }
-
-          /* Ensure images render */
           img { max-width: 100% !important; }
         }
 
@@ -64,9 +50,17 @@ export default function PaymentPackPreview() {
         }
       `}</style>
 
+      {showSettings && (
+        <PDFSettingsPanel
+          settings={settings}
+          onChange={setSettings}
+          onClose={() => setShowSettings(false)}
+        />
+      )}
+
       <div className="min-h-screen bg-[#F4F7FB] font-inter">
         {/* Top bar */}
-        <div className="sticky top-0 z-50 bg-[#08111F] border-b border-[#12305C] print:hidden">
+        <div className="sticky top-0 z-40 bg-[#08111F] border-b border-[#12305C] print:hidden">
           <div className="max-w-[1400px] mx-auto px-6 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
@@ -84,6 +78,15 @@ export default function PaymentPackPreview() {
               </div>
 
               <div className="flex items-center gap-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowSettings(true)}
+                  className="text-[11px] border-[#12305C] text-[#D9DEE7] bg-transparent hover:bg-[#12305C] hover:text-white"
+                >
+                  <Settings2 className="w-3.5 h-3.5 mr-1.5" />
+                  PDF Settings
+                </Button>
                 <Button
                   variant="outline"
                   size="sm"
@@ -108,21 +111,26 @@ export default function PaymentPackPreview() {
 
         {/* Pack selector */}
         <div className="print:hidden">
-          <div className="max-w-[1400px] mx-auto px-6 py-5">
+          <div className="max-w-[1400px] mx-auto px-6 py-5 space-y-4">
             <PackSelector
               selectedPackId={selectedPackId}
               onSelect={(id) => setSelectedPackId(id)}
               onSelectGrand={() => setSelectedPackId("grand")}
             />
+            {/* Validation banner — only for individual packs */}
+            {selectedPack && <ValidationBanner pack={selectedPack} />}
           </div>
         </div>
 
         {/* Preview area */}
-        <div id="print-root" className="max-w-[1400px] mx-auto px-6 pb-12 print:max-w-none print:px-0 print:pb-0">
+        <div
+          id="print-root"
+          className="max-w-[1400px] mx-auto px-6 pb-12 print:max-w-none print:px-0 print:pb-0"
+        >
           {selectedPackId === "grand" ? (
             <GrandSummaryPreview />
           ) : selectedPack ? (
-            <SinglePackPreview pack={selectedPack} />
+            <SinglePackPreview pack={selectedPack} settings={settings} />
           ) : null}
         </div>
       </div>
