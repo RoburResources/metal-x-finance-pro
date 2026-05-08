@@ -13,7 +13,7 @@ export default function JobDetailsSection({ jobs, alkimosJobs }) {
   return (
     <div className="px-10 pb-6 space-y-6">
       {allJobs.map((job, i) => (
-        <div key={job.jobRef} className="border border-[#E2E8F0] rounded-xl overflow-hidden">
+        <div key={job.jobRef} className="pdf-job-card border border-[#E2E8F0] rounded-xl overflow-hidden">
           {/* Job header */}
           <div className="px-5 py-4 border-b border-[#E2E8F0] flex justify-between items-center">
             <div>

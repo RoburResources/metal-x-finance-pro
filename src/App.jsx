@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
-import PaymentPackPreview from './pages/PaymentPackPreview';
+import PaymentPackPreview from './pages/PaymentPackPreview.jsx';
 // Add page imports here
 
 const AuthenticatedApp = () => {
