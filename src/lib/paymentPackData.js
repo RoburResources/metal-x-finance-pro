@@ -21,6 +21,25 @@ export const supplierDetails = {
   phone: "0427 531 995",
 };
 
+// ─────────────────────────────────────────────────────────────
+// EVIDENCE IMAGE URLs
+// Replace null values with actual hosted image URLs once uploaded.
+// ─────────────────────────────────────────────────────────────
+export const evidenceImages = {
+  // Pack 00102
+  "Photo_01_MXR00523_20-04-2026_collection.jpeg": null,
+  "Photo_02_MXR00529_22-04-2026_Alkimos_bin_delivery.png": null,
+  "Photo_03_MXR00524_21-04-2026_collection.jpeg": null,
+  "Photo_04_MXR00525_22-04-2026_collection.jpeg": null,
+  // Pack 00103
+  "Photo_05_MXR00527_29-04-2026_collection.jpeg": null,
+  "Photo_06_MXR00526_28-04-2026_Alkimos_evidence_1.jpeg": null,
+  "Photo_07_MXR00526_28-04-2026_Alkimos_evidence_2.jpeg": null,
+  // Pack 00104
+  "Photo_08_MXR00530_06-05-2026_collection_07-05-2026_delivery_G30.480_T18.880_N11.600.jpeg": null,
+  "Photo_10_MXR00531_06-05-2026_recent_Alkimos_delivery.jpeg": null,
+};
+
 export const paymentPacks = [
   // ── PACK 00101 ─────────────────────────────────────────────────────────────
   {
@@ -53,6 +72,7 @@ export const paymentPacks = [
         gst: "incl. GST",
         dmtRef: "DMT-00521",
         gmtRef: "GMT-00521",
+        evidence: [],
       },
       {
         jobRef: "MXR00522",
@@ -77,6 +97,7 @@ export const paymentPacks = [
         gst: "incl. GST",
         dmtRef: "DMT-00522",
         gmtRef: "GMT-00522",
+        evidence: [],
       },
     ],
     alkimosJobs: [],

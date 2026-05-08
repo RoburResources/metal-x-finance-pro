@@ -6,6 +6,7 @@ import JobDetailsSection from "./JobDetailsSection";
 import PaymentSummaryTable from "./PaymentSummaryTable";
 import ConfidentialityBlock from "./ConfidentialityBlock";
 import PDFFooter from "./PDFFooter";
+// EvidenceGallery is now embedded per-job inside JobDetailsSection
 
 export default function SinglePackPreview({ pack }) {
   return (

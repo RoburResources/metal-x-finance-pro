@@ -1,4 +1,5 @@
 import React from "react";
+import EvidenceGallery from "./EvidenceGallery";
 
 const fmt = (v) =>
   `$${v.toLocaleString("en-AU", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -95,6 +96,7 @@ export default function JobDetailsSection({ jobs, alkimosJobs }) {
                   <p className="text-[16px] font-bold text-white">{fmt(job.netPayable)}</p>
                 </div>
               </div>
+              <EvidenceGallery evidence={job.evidence} jobRef={job.jobRef} />
             </div>
           ) : (
             <div className="px-5 py-4">
@@ -103,6 +105,7 @@ export default function JobDetailsSection({ jobs, alkimosJobs }) {
                 <p className="text-[10px] text-[#8FA8C8]">Bin placement / delivery service charge incl. GST</p>
                 <p className="text-[16px] font-bold text-white">–${job.serviceCharge.toFixed(2)}</p>
               </div>
+              <EvidenceGallery evidence={job.evidence} jobRef={job.jobRef} />
             </div>
           )}
         </div>
