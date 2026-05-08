@@ -8,66 +8,64 @@ export default function GrandSummary() {
   const g = grandSummary;
 
   return (
-    <div className="px-8 pb-5">
-      {/* Pack-by-pack summary */}
-      <p className="text-[9px] font-bold text-[#6B7280] uppercase tracking-[0.1em] mb-3">Payment Pack Summary</p>
-      <table className="w-full text-[10px] border-collapse mb-5">
-        <thead>
-          <tr className="bg-[#0D1F3C] text-white">
-            {["Pack", "Period", "Jobs", "Tonnes", "Final / Status"].map((h) => (
-              <th key={h} className="px-3 py-2 text-left font-semibold text-[9px] uppercase tracking-[0.06em]">{h}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {paymentPacks.map((pack) => {
-            const jobRefs = [...pack.jobs.map((j) => j.jobRef), ...pack.alkimosJobs.map((j) => j.jobRef)].join(", ");
-            return (
-              <tr key={pack.id} className="border border-[#E2E8F0]">
-                <td className="px-3 py-2 font-medium text-[#0D1F3C]">{pack.id}</td>
-                <td className="px-3 py-2 text-[#4A5568]">{pack.period}</td>
-                <td className="px-3 py-2 text-[#4A5568]">{jobRefs}</td>
-                <td className="px-3 py-2 text-[#0D1F3C]">{pack.summary.totalPayableTonnes.toFixed(3)} t</td>
-                <td className="px-3 py-2 text-right font-medium text-[#0D1F3C]">
-                  {pack.summary.conflictNote
-                    ? `Controlled ${fmt(pack.summary.calculatedNetPayable)}; remitted ${fmt(pack.summary.remittancePaid)}`
-                    : fmt(pack.summary.calculatedNetPayable)}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+    <div className="px-10 pb-6 space-y-6">
+      {/* Pack-by-pack */}
+      <div className="border border-[#E2E8F0] rounded-xl overflow-hidden">
+        <div className="px-5 py-4 border-b border-[#E2E8F0]">
+          <p className="text-[9px] font-bold text-[#1E4D99] uppercase tracking-[0.12em]">Payment Pack Summary</p>
+        </div>
+        {/* Header row */}
+        <div className="grid grid-cols-5 px-5 py-2.5 bg-[#F8FAFC] border-b border-[#E2E8F0]">
+          {["Pack", "Period", "Jobs", "Tonnes", "Net Payable"].map((h) => (
+            <p key={h} className="text-[8px] font-bold text-[#9CA3AF] uppercase tracking-[0.08em]">{h}</p>
+          ))}
+        </div>
+        {paymentPacks.map((pack) => {
+          const jobRefs = [...pack.jobs.map((j) => j.jobRef), ...pack.alkimosJobs.map((j) => j.jobRef)].join(", ");
+          return (
+            <div key={pack.id} className="grid grid-cols-5 px-5 py-3 border-b border-[#F3F4F6] last:border-0">
+              <p className="text-[10px] font-bold text-[#0D1F3C]">{pack.id}</p>
+              <p className="text-[10px] text-[#6B7280]">{pack.period}</p>
+              <p className="text-[10px] text-[#6B7280]">{jobRefs}</p>
+              <p className="text-[10px] text-[#0D1F3C]">{pack.summary.totalPayableTonnes.toFixed(3)} t</p>
+              <p className="text-[10px] font-semibold text-[#0D1F3C]">
+                {pack.summary.conflictNote
+                  ? `Controlled ${fmt(pack.summary.calculatedNetPayable)}`
+                  : fmt(pack.summary.calculatedNetPayable)}
+              </p>
+            </div>
+          );
+        })}
+      </div>
 
       {/* Grand totals */}
-      <p className="text-[9px] font-bold text-[#6B7280] uppercase tracking-[0.1em] mb-3">Grand Totals</p>
-      <table className="w-full text-[10px] border-collapse">
-        <thead>
-          <tr className="bg-[#0D1F3C] text-white">
-            <th className="px-3 py-2 text-left font-semibold text-[9px] uppercase tracking-[0.06em]">Grand Total Field</th>
-            <th className="px-3 py-2 text-right font-semibold text-[9px] uppercase tracking-[0.06em]">Value</th>
-          </tr>
-        </thead>
-        <tbody>
+      <div className="border border-[#E2E8F0] rounded-xl overflow-hidden">
+        <div className="px-5 py-4 border-b border-[#E2E8F0]">
+          <p className="text-[9px] font-bold text-[#1E4D99] uppercase tracking-[0.12em]">Grand Totals</p>
+        </div>
+        <div className="divide-y divide-[#F3F4F6]">
           <GRow label="Total payment packs" value={g.totalPacks} />
           <GRow label="Total payable tonnes" value={`${g.totalPayableTonnes.toFixed(3)} t`} />
-          <GRow label="Total material value" value={fmt(g.totalMaterialValue)} />
-          <GRow label="Total transport deductions" value={`–${fmt(g.totalTransportDeductions)}`} />
-          <GRow label="Total Alkimos service charges" value={`–${fmt(g.totalAlkimosCharges)}`} />
-          <GRow label="Controlled final net payable total" value={fmt(g.controlledNetPayable)} />
+          <GRow label="Total material value incl. GST" value={fmt(g.totalMaterialValue)} />
+          <GRow label="Total transport deductions incl. GST" value={`–${fmt(g.totalTransportDeductions)}`} />
+          <GRow label="Total Alkimos service charges incl. GST" value={`–${fmt(g.totalAlkimosCharges)}`} />
+          <GRow label="Controlled final net payable" value={fmt(g.controlledNetPayable)} />
           <GRow label="Total paid by remittance evidence" value={fmt(g.totalPaidByRemittance)} />
-          <GRow label="Total outstanding payable to Owens" value={fmt(g.totalOutstandingPayable)} bold />
-        </tbody>
-      </table>
+        </div>
+        <div className="bg-[#0D1F3C] px-5 py-4 flex justify-between items-center">
+          <p className="text-[11px] font-bold text-white">Total outstanding payable to Owens</p>
+          <p className="text-[22px] font-bold text-white">{fmt(g.totalOutstandingPayable)}</p>
+        </div>
+      </div>
     </div>
   );
 }
 
-function GRow({ label, value, bold }) {
+function GRow({ label, value }) {
   return (
-    <tr className="border border-[#E2E8F0]">
-      <td className={`px-3 py-2 ${bold ? "font-bold text-[#0D1F3C]" : "text-[#4A5568]"}`}>{label}</td>
-      <td className={`px-3 py-2 text-right ${bold ? "font-bold text-[#0D1F3C]" : "text-[#0D1F3C]"}`}>{value}</td>
-    </tr>
+    <div className="px-5 py-3 flex justify-between items-center">
+      <p className="text-[10px] text-[#6B7280]">{label}</p>
+      <p className="text-[10px] font-semibold text-[#0D1F3C]">{value}</p>
+    </div>
   );
 }

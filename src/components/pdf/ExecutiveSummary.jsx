@@ -9,60 +9,46 @@ export default function ExecutiveSummary({ pack }) {
   const s = pack.summary;
 
   return (
-    <div className="px-8 pb-5">
-      <div className="border-b border-[#E2E8F0] mb-4" />
+    <div className="px-10 pb-6">
+      <div className="border border-[#E2E8F0] rounded-xl overflow-hidden">
+        <div className="px-5 py-4 border-b border-[#E2E8F0]">
+          <p className="text-[9px] font-bold text-[#1E4D99] uppercase tracking-[0.12em]">Executive Summary</p>
+        </div>
 
-      <p className="text-[9px] font-bold text-[#6B7280] uppercase tracking-[0.1em] mb-3">Executive Summary</p>
+        {/* Summary grid */}
+        <div className="grid grid-cols-2 divide-x divide-[#E2E8F0]">
+          <SummaryCell label="Payment pack" value={pack.id} />
+          <SummaryCell label="Payment status" value={pack.statusNote} />
+          <SummaryCell label="Weighed material jobs" value={s.weighedMaterialJobs} border />
+          <SummaryCell label="Bin service jobs" value={s.binServiceJobs} border />
+          <SummaryCell label="Payable tonnes" value={`${s.totalPayableTonnes.toFixed(3)} t`} border />
+          <SummaryCell label="Material value incl. GST" value={fmt(s.totalMaterialValue)} border />
+          <SummaryCell label="Transport deductions incl. GST" value={`–${fmt(s.totalTransportDeductions)}`} border />
+          <SummaryCell label="Alkimos charges incl. GST" value={s.alkimosServiceCharges > 0 ? `–${fmt(s.alkimosServiceCharges)}` : "$0.00"} border />
+        </div>
 
-      <table className="w-full text-[10px] border-collapse mb-4">
-        <tbody>
-          <SummaryRow label="Payment pack" value={pack.id} label2="Payment status" value2={pack.statusNote} />
-          <SummaryRow
-            label="Weighed material jobs"
-            value={s.weighedMaterialJobs}
-            label2="Bin service jobs"
-            value2={s.binServiceJobs}
-          />
-          <SummaryRow
-            label="Payable tonnes"
-            value={`${s.totalPayableTonnes.toFixed(3)} t`}
-            label2="Material value incl. GST"
-            value2={fmt(s.totalMaterialValue)}
-          />
-          <SummaryRow
-            label="Transport deductions incl. GST"
-            value={`–${fmt(s.totalTransportDeductions)}`}
-            label2="Alkimos charges incl. GST"
-            value2={s.alkimosServiceCharges > 0 ? `–${fmt(s.alkimosServiceCharges)}` : "$0.00"}
-          />
-          <tr className="border border-[#E2E8F0] bg-[#F8FAFC]">
-            <td className="px-3 py-2.5 font-bold text-[#0D1F3C]">Final net payable incl. GST</td>
-            <td className="px-3 py-2.5" />
-            <td className="px-3 py-2.5" />
-            <td className="px-3 py-2.5 font-bold text-[#0D1F3C] text-right">
-              {fmt(s.calculatedNetPayable)}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+        {/* Final net payable */}
+        <div className="bg-[#0D1F3C] px-5 py-4 flex justify-between items-center">
+          <p className="text-[11px] font-bold text-white">Final net payable incl. GST</p>
+          <p className="text-[22px] font-bold text-white">{fmt(s.calculatedNetPayable)}</p>
+        </div>
+      </div>
 
       {s.conflictNote && (
-        <div className="border border-[#FCA5A5] bg-[#FFF5F5] rounded p-3 mt-2">
+        <div className="border border-[#FCA5A5] bg-[#FFF5F5] rounded-xl p-4 mt-4">
           <p className="text-[9px] font-bold text-[#DC2626] uppercase tracking-[0.08em] mb-1">Calculation Conflict — Reference</p>
-          <p className="text-[10px] text-[#7F1D1D]">{s.conflictNote}</p>
+          <p className="text-[10px] text-[#7F1D1D] leading-relaxed">{s.conflictNote}</p>
         </div>
       )}
     </div>
   );
 }
 
-function SummaryRow({ label, value, label2, value2 }) {
+function SummaryCell({ label, value, border }) {
   return (
-    <tr className="border border-[#E2E8F0]">
-      <td className="px-3 py-2 text-[#4A5568] w-[28%]">{label}</td>
-      <td className="px-3 py-2 text-[#0D1F3C] w-[22%]">{value}</td>
-      <td className="px-3 py-2 text-[#4A5568] w-[28%]">{label2}</td>
-      <td className="px-3 py-2 text-[#0D1F3C] text-right w-[22%]">{value2}</td>
-    </tr>
+    <div className={`px-5 py-3.5 ${border ? "border-t border-[#E2E8F0]" : ""}`}>
+      <p className="text-[9px] text-[#9CA3AF] uppercase tracking-[0.08em] mb-1">{label}</p>
+      <p className="text-[11px] font-semibold text-[#0D1F3C]">{value}</p>
+    </div>
   );
 }

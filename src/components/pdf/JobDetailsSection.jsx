@@ -4,134 +4,118 @@ const fmt = (v) =>
   `$${v.toLocaleString("en-AU", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 export default function JobDetailsSection({ jobs, alkimosJobs }) {
+  const allJobs = [
+    ...jobs.map((j) => ({ ...j, _type: "weighed" })),
+    ...alkimosJobs.map((j) => ({ ...j, _type: "alkimos" })),
+  ];
+
   return (
-    <div className="px-8 pb-5">
-      {jobs.map((job, i) => (
-        <div key={job.jobRef} className="mb-6">
-          {/* Job heading */}
-          <h3 className="text-[13px] font-bold text-[#0D1F3C] mb-3">
-            Job {i + 1} — {job.jobRef}
-          </h3>
+    <div className="px-10 pb-6 space-y-6">
+      {allJobs.map((job, i) => (
+        <div key={job.jobRef} className="border border-[#E2E8F0] rounded-xl overflow-hidden">
+          {/* Job header */}
+          <div className="px-5 py-4 border-b border-[#E2E8F0] flex justify-between items-center">
+            <div>
+              <p className="text-[9px] font-bold text-[#1E4D99] uppercase tracking-[0.12em] mb-0.5">
+                Job {i + 1}
+              </p>
+              <p className="text-[13px] font-bold text-[#0D1F3C]">{job.jobRef}</p>
+            </div>
+            <span className="text-[9px] font-semibold text-[#6B7280] bg-[#F3F4F6] rounded-full px-3 py-1 uppercase tracking-wide">
+              {job._type === "alkimos" ? "Bin Service" : "Weighed Material"}
+            </span>
+          </div>
 
-          {/* Collection detail table */}
-          <p className="text-[9px] font-bold text-[#6B7280] uppercase tracking-[0.08em] mb-1.5">Collection Detail</p>
-          <table className="w-full text-[10px] border-collapse mb-3">
-            <tbody>
-              <DetailRow label="Collection / service docket" value={job.docketNumber} label2="Collection date" value2={job.collectionDate} />
-              <DetailRow label="Site / reference" value={job.site} label2="Client company" value2="Owens For Scrap" />
-              <DetailRow label="Client contact" value="[NEEDS CONFIRMATION]" label2="Phone" value2="0427 531 995" />
-              <DetailRow label="Driver" value={job.driver} label2="Vehicle rego" value2={job.vehicleRego} />
-              <DetailRow label="Description" value={job.description} label2="Service type" value2="Weighed material" />
-            </tbody>
-          </table>
+          {/* Collection detail */}
+          <div className="px-5 py-4 border-b border-[#E2E8F0]">
+            <p className="text-[9px] font-bold text-[#9CA3AF] uppercase tracking-[0.1em] mb-3">Collection Detail</p>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-2">
+              {job._type === "weighed" ? (
+                <>
+                  <DetailPair label="Docket" value={job.docketNumber} />
+                  <DetailPair label="Collection date" value={job.collectionDate} />
+                  <DetailPair label="Site" value={job.site} />
+                  <DetailPair label="Client company" value="Owens For Scrap" />
+                  <DetailPair label="Driver" value={job.driver} />
+                  <DetailPair label="Vehicle rego" value={job.vehicleRego} />
+                  <DetailPair label="Description" value={job.description} />
+                  <DetailPair label="Service type" value="Weighed material" />
+                </>
+              ) : (
+                <>
+                  <DetailPair label="Job ref" value={job.jobRef} />
+                  <DetailPair label="Service date" value={job.serviceDate} />
+                  <DetailPair label="Site" value={job.site} />
+                  <DetailPair label="Client company" value="Owens For Scrap" />
+                  <DetailPair label="Description" value={job.description} />
+                  <DetailPair label="Service type" value="Bin placement / delivery" />
+                </>
+              )}
+            </div>
+          </div>
 
-          {/* Weights table */}
-          <p className="text-[9px] font-bold text-[#6B7280] uppercase tracking-[0.08em] mb-1.5">Direct Measurement / Grading</p>
-          <table className="w-full text-[10px] border-collapse mb-3">
-            <thead>
-              <tr className="bg-[#0D1F3C] text-white">
+          {/* Weights / pricing */}
+          {job._type === "weighed" ? (
+            <div className="px-5 py-4">
+              <p className="text-[9px] font-bold text-[#9CA3AF] uppercase tracking-[0.1em] mb-3">Measurement & Pricing</p>
+              {/* Weight row */}
+              <div className="grid grid-cols-7 mb-2">
                 {["DMT No.", "GMT No.", "Gross", "Tare", "Net", "Deduction", "Payable"].map((h) => (
-                  <th key={h} className="px-3 py-2 text-left font-semibold text-[9px] uppercase tracking-[0.06em]">{h}</th>
+                  <p key={h} className="text-[8px] font-semibold text-[#9CA3AF] uppercase tracking-[0.06em]">{h}</p>
                 ))}
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="border border-[#E2E8F0]">
-                <td className="px-3 py-2">{job.dmtRef}</td>
-                <td className="px-3 py-2">{job.gmtRef}</td>
-                <td className="px-3 py-2">{job.gross.toFixed(3)} t</td>
-                <td className="px-3 py-2">{job.tare.toFixed(3)} t</td>
-                <td className="px-3 py-2">{job.net.toFixed(3)} t</td>
-                <td className="px-3 py-2">{job.deduction.toFixed(3)} t</td>
-                <td className="px-3 py-2">{job.payableTonnes.toFixed(3)} t</td>
-              </tr>
-              <tr className="border border-[#E2E8F0] bg-[#F8FAFC]">
-                <td className="px-3 py-1.5 text-[9px] font-bold text-[#6B7280] uppercase tracking-[0.06em]">Material Grade</td>
-                <td className="px-3 py-1.5 text-[9px] font-bold text-[#6B7280] uppercase tracking-[0.06em]" colSpan={2}>Rate / Pricing</td>
-                <td className="px-3 py-1.5 text-[9px] font-bold text-[#6B7280] uppercase tracking-[0.06em]" colSpan={2}>Gross Value incl. GST</td>
-                <td className="px-3 py-1.5 text-[9px] font-bold text-[#6B7280] uppercase tracking-[0.06em]">Deduction incl. GST</td>
-                <td className="px-3 py-1.5 text-[9px] font-bold text-[#6B7280] uppercase tracking-[0.06em]">Net Payable incl. GST</td>
-              </tr>
-              <tr className="border border-[#E2E8F0]">
-                <td className="px-3 py-2 font-bold text-[#0D1F3C]">{job.material}</td>
-                <td className="px-3 py-2" colSpan={2}>{job.rateLabel}</td>
-                <td className="px-3 py-2 font-bold" colSpan={2}>{fmt(job.grossValue)}</td>
-                <td className="px-3 py-2">–{fmt(job.transportDeduction)}</td>
-                <td className="px-3 py-2 font-bold text-[#0D1F3C]">{fmt(job.netPayable)}</td>
-              </tr>
-            </tbody>
-          </table>
-
-          {/* Evidence */}
-          {job.evidence && job.evidence.length > 0 && (
-            <div className="mb-1">
-              <p className="text-[9px] font-bold text-[#6B7280] uppercase tracking-[0.08em] mb-1">Supporting Evidence</p>
-              {job.evidence.map((e) => (
-                <p key={e} className="text-[9px] text-[#6B7280]">{e}</p>
-              ))}
+              </div>
+              <div className="grid grid-cols-7 bg-[#F8FAFC] rounded-lg px-0 py-2 mb-4">
+                {[job.dmtRef, job.gmtRef, `${job.gross.toFixed(3)} t`, `${job.tare.toFixed(3)} t`, `${job.net.toFixed(3)} t`, `${job.deduction.toFixed(3)} t`, `${job.payableTonnes.toFixed(3)} t`].map((v, i) => (
+                  <p key={i} className="text-[10px] text-[#0D1F3C] px-2 py-1">{v}</p>
+                ))}
+              </div>
+              {/* Pricing row */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="bg-[#F8FAFC] rounded-lg p-3">
+                  <p className="text-[8px] text-[#9CA3AF] uppercase tracking-[0.06em] mb-1">Material</p>
+                  <p className="text-[10px] font-bold text-[#0D1F3C]">{job.material}</p>
+                </div>
+                <div className="bg-[#F8FAFC] rounded-lg p-3">
+                  <p className="text-[8px] text-[#9CA3AF] uppercase tracking-[0.06em] mb-1">Rate</p>
+                  <p className="text-[10px] font-bold text-[#0D1F3C]">{job.rateLabel}</p>
+                </div>
+                <div className="bg-[#F8FAFC] rounded-lg p-3">
+                  <p className="text-[8px] text-[#9CA3AF] uppercase tracking-[0.06em] mb-1">Gross value incl. GST</p>
+                  <p className="text-[10px] font-bold text-[#0D1F3C]">{fmt(job.grossValue)}</p>
+                </div>
+              </div>
+              {/* Net payable strip */}
+              <div className="flex justify-between items-center bg-[#0D1F3C] rounded-lg px-4 py-3 mt-3">
+                <div>
+                  <p className="text-[8px] text-[#8FA8C8]">Transport deduction</p>
+                  <p className="text-[10px] text-[#8FA8C8]">–{fmt(job.transportDeduction)}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[8px] text-[#8FA8C8] mb-0.5">Net payable incl. GST</p>
+                  <p className="text-[16px] font-bold text-white">{fmt(job.netPayable)}</p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="px-5 py-4">
+              <p className="text-[9px] font-bold text-[#9CA3AF] uppercase tracking-[0.1em] mb-3">Service Charge</p>
+              <div className="flex justify-between items-center bg-[#0D1F3C] rounded-lg px-4 py-3">
+                <p className="text-[10px] text-[#8FA8C8]">Bin placement / delivery service charge incl. GST</p>
+                <p className="text-[16px] font-bold text-white">–${job.serviceCharge.toFixed(2)}</p>
+              </div>
             </div>
           )}
         </div>
       ))}
-
-      {/* Alkimos bin service jobs */}
-      {alkimosJobs.length > 0 &&
-        alkimosJobs.map((job, i) => (
-          <div key={job.jobRef} className="mb-6">
-            <h3 className="text-[13px] font-bold text-[#0D1F3C] mb-3">
-              Job {jobs.length + i + 1} — {job.jobRef}
-            </h3>
-            <p className="text-[9px] font-bold text-[#6B7280] uppercase tracking-[0.08em] mb-1.5">Collection Detail</p>
-            <table className="w-full text-[10px] border-collapse mb-3">
-              <tbody>
-                <DetailRow label="Collection / service docket" value={job.jobRef} label2="Collection date" value2={job.serviceDate} />
-                <DetailRow label="Site / reference" value={job.site} label2="Client company" value2="Owens For Scrap" />
-                <DetailRow label="Client contact" value="[NEEDS CONFIRMATION]" label2="Phone" value2="0427 531 995" />
-                <DetailRow label="Driver" value="[NEEDS CONFIRMATION]" label2="Vehicle rego" value2="[NEEDS CONFIRMATION]" />
-                <DetailRow label="Description" value={job.description} label2="Service type" value2="Bin placement / delivery" />
-              </tbody>
-            </table>
-
-            <table className="w-full text-[10px] border-collapse mb-3">
-              <thead>
-                <tr className="bg-[#0D1F3C] text-white">
-                  {["Service", "DMT/GMT", "Material Value", "Service Charge", "Final"].map((h) => (
-                    <th key={h} className="px-3 py-2 text-left font-semibold text-[9px] uppercase tracking-[0.06em]">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border border-[#E2E8F0]">
-                  <td className="px-3 py-2 font-bold text-[#0D1F3C]">Bin placement / delivery service</td>
-                  <td className="px-3 py-2">N/A</td>
-                  <td className="px-3 py-2">N/A</td>
-                  <td className="px-3 py-2 font-bold">–${job.serviceCharge.toFixed(2)}</td>
-                  <td className="px-3 py-2 font-bold text-[#0D1F3C]">–${job.serviceCharge.toFixed(2)}</td>
-                </tr>
-              </tbody>
-            </table>
-
-            {job.evidence && job.evidence.length > 0 && (
-              <div className="mb-1">
-                <p className="text-[9px] font-bold text-[#6B7280] uppercase tracking-[0.08em] mb-1">Supporting Evidence</p>
-                {job.evidence.map((e) => (
-                  <p key={e} className="text-[9px] text-[#6B7280]">{e}</p>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
     </div>
   );
 }
 
-function DetailRow({ label, value, label2, value2 }) {
+function DetailPair({ label, value }) {
   return (
-    <tr className="border border-[#E2E8F0]">
-      <td className="px-3 py-2 text-[#4A5568] w-[26%]">{label}</td>
-      <td className="px-3 py-2 text-[#0D1F3C] w-[24%]">{value}</td>
-      <td className="px-3 py-2 text-[#4A5568] w-[26%]">{label2}</td>
-      <td className="px-3 py-2 text-[#0D1F3C] text-right w-[24%]">{value2}</td>
-    </tr>
+    <div>
+      <p className="text-[8px] text-[#9CA3AF] uppercase tracking-[0.06em] mb-0.5">{label}</p>
+      <p className="text-[10px] text-[#0D1F3C]">{value}</p>
+    </div>
   );
 }
