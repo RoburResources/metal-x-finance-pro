@@ -7,53 +7,50 @@ import PDFFooter from "./PDFFooter";
 export default function GrandSummaryPreview() {
   return (
     <div
-      className="bg-white shadow-xl mx-auto font-inter"
-      style={{
-        width: "210mm",
-        minHeight: "297mm",
-        padding: "20mm 18mm 16mm 18mm",
-        boxSizing: "border-box",
-      }}
+      className="bg-white shadow-xl mx-auto font-inter overflow-hidden"
+      style={{ width: "210mm", minHeight: "297mm", boxSizing: "border-box" }}
     >
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex justify-between items-start mb-5">
+      {/* Dark navy header */}
+      <div className="bg-[#0D1F3C] px-8 py-7">
+        <div className="flex justify-between items-start">
           <div>
-            <h2 className="text-[15px] font-bold text-[#08111F] tracking-wide">
-              {companyDetails.name}
-            </h2>
-            <p className="text-[9px] text-[#6F7472] mt-0.5">
-              Trading as {companyDetails.tradingAs}
+            <h1 className="text-[28px] font-bold text-white leading-none tracking-tight">
+              Metal X Renewables
+            </h1>
+            <p className="text-[12px] text-[#8FA8C8] mt-1">
+              Pty Ltd | ABN {companyDetails.abn}
             </p>
-            <p className="text-[9px] text-[#6F7472]">ABN {companyDetails.abn}</p>
-            <p className="text-[8px] text-[#1E4D99] font-medium tracking-[0.08em] mt-2 uppercase">
+            <p className="text-[11px] text-[#4A90D9] mt-0.5 font-medium">
               {companyDetails.tagline}
             </p>
+            <div className="mt-4">
+              <span className="inline-block bg-[#1E4D99] text-white text-[9px] font-bold uppercase tracking-[0.12em] px-3 py-1.5 rounded-sm">
+                Grand Payment Summary
+              </span>
+            </div>
           </div>
-          <div className="w-[120px] h-[48px] border border-[#D9DEE7] rounded flex items-center justify-center bg-[#F4F7FB]">
-            <span className="text-[7px] text-[#6F7472] uppercase tracking-widest font-semibold">Metal X</span>
+          <div className="text-right">
+            <p className="text-[9px] font-bold text-[#8FA8C8] uppercase tracking-[0.1em] mb-1">
+              Document
+            </p>
+            <p className="text-[22px] font-bold text-white leading-none">
+              Owens For Scrap
+            </p>
+            <p className="text-[11px] text-[#8FA8C8] mt-2">Issued: 08/05/2026</p>
+            <p className="text-[11px] text-[#8FA8C8]">All Periods Combined</p>
           </div>
         </div>
+      </div>
 
-        <div className="h-px bg-[#D9DEE7] mb-6" />
-
-        <h1 className="text-[20px] font-bold text-[#08111F] tracking-[0.04em] uppercase mb-4">
-          Owens For Scrap — Grand Summary
-        </h1>
-
-        <div className="grid grid-cols-3 gap-6">
-          <div>
-            <p className="text-[7.5px] font-bold text-[#6F7472] uppercase tracking-[0.05em] mb-1">DOCUMENT TYPE</p>
-            <p className="text-[9.5px] font-semibold text-[#08111F]">Grand Payment Summary</p>
-          </div>
-          <div>
-            <p className="text-[7.5px] font-bold text-[#6F7472] uppercase tracking-[0.05em] mb-1">ISSUED</p>
-            <p className="text-[9.5px] font-semibold text-[#08111F]">08/05/2026</p>
-          </div>
-          <div>
-            <p className="text-[7.5px] font-bold text-[#6F7472] uppercase tracking-[0.05em] mb-1">CLIENT</p>
-            <p className="text-[9.5px] font-semibold text-[#08111F]">Owens For Scrap</p>
-          </div>
+      {/* Issuer row */}
+      <div className="px-8 py-6">
+        <div className="border border-[#D9DEE7] rounded-lg p-5">
+          <p className="text-[9px] font-bold text-[#1E4D99] uppercase tracking-[0.1em] mb-2">
+            Issued By
+          </p>
+          <p className="text-[13px] font-bold text-[#0D1F3C] mb-1">{companyDetails.name}</p>
+          <p className="text-[11px] text-[#4A5568]">ABN {companyDetails.abn}</p>
+          <p className="text-[11px] text-[#4A5568]">Perth, Western Australia &nbsp;|&nbsp; {companyDetails.email}</p>
         </div>
       </div>
 

@@ -11,13 +11,8 @@ import PDFFooter from "./PDFFooter";
 export default function SinglePackPreview({ pack }) {
   return (
     <div
-      className="bg-white shadow-xl mx-auto font-inter"
-      style={{
-        width: "210mm",
-        minHeight: "297mm",
-        padding: "20mm 18mm 16mm 18mm",
-        boxSizing: "border-box",
-      }}
+      className="bg-white shadow-xl mx-auto font-inter overflow-hidden"
+      style={{ width: "210mm", minHeight: "297mm", boxSizing: "border-box" }}
     >
       <PDFHeader pack={pack} />
       <SupplierDetails />

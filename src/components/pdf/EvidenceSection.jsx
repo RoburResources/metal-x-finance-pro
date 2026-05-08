@@ -4,55 +4,52 @@ export default function EvidenceSection({ pack }) {
   const allJobs = [...pack.jobs, ...(pack.alkimosJobs || [])];
 
   return (
-    <div className="mb-8">
-      <h3 className="text-[10px] font-bold text-[#08111F] uppercase tracking-[0.05em] mb-3">
-        Supporting Evidence
-      </h3>
-      <div className="h-px bg-[#D9DEE7] mb-4" />
+    <div className="px-8 pb-6">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="h-px flex-1 bg-[#D9DEE7]" />
+        <p className="text-[9px] font-bold text-[#1E4D99] uppercase tracking-[0.12em]">Supporting Evidence</p>
+        <div className="h-px flex-1 bg-[#D9DEE7]" />
+      </div>
 
-      <table className="w-full border border-[#D9DEE7] rounded-sm text-left">
-        <thead>
-          <tr className="bg-[#F4F7FB]">
-            <th className="text-[7.5px] font-bold text-[#6F7472] uppercase tracking-[0.04em] px-4 py-2 border-b border-[#D9DEE7]">Job Ref</th>
-            <th className="text-[7.5px] font-bold text-[#6F7472] uppercase tracking-[0.04em] px-4 py-2 border-b border-[#D9DEE7]">Evidence Type</th>
-            <th className="text-[7.5px] font-bold text-[#6F7472] uppercase tracking-[0.04em] px-4 py-2 border-b border-[#D9DEE7]">Reference</th>
-            <th className="text-[7.5px] font-bold text-[#6F7472] uppercase tracking-[0.04em] px-4 py-2 border-b border-[#D9DEE7]">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {allJobs.map((job) => (
+      <div className="border border-[#D9DEE7] rounded-lg overflow-hidden">
+        {/* Header */}
+        <div className="grid grid-cols-4 bg-[#F8FAFC] px-5 py-3 border-b border-[#D9DEE7]">
+          <p className="text-[9px] font-bold text-[#6B7280] uppercase tracking-[0.08em]">Job Ref</p>
+          <p className="text-[9px] font-bold text-[#6B7280] uppercase tracking-[0.08em]">Evidence Type</p>
+          <p className="text-[9px] font-bold text-[#6B7280] uppercase tracking-[0.08em]">Reference</p>
+          <p className="text-[9px] font-bold text-[#6B7280] uppercase tracking-[0.08em]">Status</p>
+        </div>
+
+        {allJobs.map((job) =>
+          job.type === "weighed_material" ? (
             <React.Fragment key={job.jobRef}>
-              {job.type === "weighed_material" ? (
-                <>
-                  <tr className="border-b border-[#D9DEE7]">
-                    <td className="text-[8.5px] font-medium text-[#08111F] px-4 py-2" rowSpan={3}>{job.jobRef}</td>
-                    <td className="text-[8px] text-[#08111F] px-4 py-2">Collection Docket</td>
-                    <td className="text-[8px] text-[#6F7472] px-4 py-2">{job.docketNumber}</td>
-                    <td className="text-[8px] text-[#6F7472] px-4 py-2">[NEEDS CONFIRMATION]</td>
-                  </tr>
-                  <tr className="border-b border-[#D9DEE7]">
-                    <td className="text-[8px] text-[#08111F] px-4 py-2">DMT Certificate</td>
-                    <td className="text-[8px] text-[#6F7472] px-4 py-2">{job.dmtRef}</td>
-                    <td className="text-[8px] text-[#6F7472] px-4 py-2">[NEEDS CONFIRMATION]</td>
-                  </tr>
-                  <tr className="border-b border-[#D9DEE7]">
-                    <td className="text-[8px] text-[#08111F] px-4 py-2">GMT Certificate</td>
-                    <td className="text-[8px] text-[#6F7472] px-4 py-2">{job.gmtRef}</td>
-                    <td className="text-[8px] text-[#6F7472] px-4 py-2">[NEEDS CONFIRMATION]</td>
-                  </tr>
-                </>
-              ) : (
-                <tr className="border-b border-[#D9DEE7]">
-                  <td className="text-[8.5px] font-medium text-[#08111F] px-4 py-2">{job.jobRef}</td>
-                  <td className="text-[8px] text-[#08111F] px-4 py-2">Service Confirmation</td>
-                  <td className="text-[8px] text-[#6F7472] px-4 py-2">[NEEDS CONFIRMATION]</td>
-                  <td className="text-[8px] text-[#6F7472] px-4 py-2">[NEEDS CONFIRMATION]</td>
-                </tr>
-              )}
+              {[
+                ["Collection Docket", job.docketNumber],
+                ["DMT Certificate", job.dmtRef],
+                ["GMT Certificate", job.gmtRef],
+              ].map(([type, ref], idx) => (
+                <div key={type} className="grid grid-cols-4 px-5 py-2.5 border-b border-[#F1F5F9]">
+                  {idx === 0 ? (
+                    <span className="text-[11px] font-medium text-[#1A2840]">{job.jobRef}</span>
+                  ) : (
+                    <span />
+                  )}
+                  <span className="text-[11px] text-[#1A2840]">{type}</span>
+                  <span className="text-[10px] text-[#6B7280]">{ref}</span>
+                  <span className="text-[10px] text-[#6B7280]">[Needs Confirmation]</span>
+                </div>
+              ))}
             </React.Fragment>
-          ))}
-        </tbody>
-      </table>
+          ) : (
+            <div key={job.jobRef} className="grid grid-cols-4 px-5 py-2.5 border-b border-[#F1F5F9]">
+              <span className="text-[11px] font-medium text-[#1A2840]">{job.jobRef}</span>
+              <span className="text-[11px] text-[#1A2840]">Service Confirmation</span>
+              <span className="text-[10px] text-[#6B7280]">[Needs Confirmation]</span>
+              <span className="text-[10px] text-[#6B7280]">[Needs Confirmation]</span>
+            </div>
+          )
+        )}
+      </div>
     </div>
   );
 }

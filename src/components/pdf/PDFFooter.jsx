@@ -1,27 +1,20 @@
 import React from "react";
 import { companyDetails } from "@/lib/paymentPackData";
 
-export default function PDFFooter({ packId, issueDate, pageNum, totalPages }) {
+export default function PDFFooter({ packId, issueDate }) {
   return (
-    <div className="mt-auto pt-6">
-      <div className="h-px bg-[#D9DEE7] mb-3" />
-      <div className="flex justify-between items-center">
-        <p className="text-[7.5px] text-[#6F7472]">
-          {companyDetails.name}
-        </p>
-        <p className="text-[7.5px] text-[#6F7472]">
+    <div className="bg-[#0D1F3C] px-8 py-5 flex justify-between items-end mt-auto">
+      <div>
+        <p className="text-[13px] font-bold text-white">{companyDetails.name}</p>
+        <p className="text-[10px] text-[#8FA8C8] mt-0.5">
           ABN {companyDetails.abn} &nbsp;|&nbsp; {companyDetails.email} &nbsp;|&nbsp; Perth, Western Australia
         </p>
       </div>
-      <div className="flex justify-between items-center mt-1">
-        <p className="text-[7px] text-[#6F7472]">
+      <div className="text-right">
+        <p className="text-[10px] text-[#8FA8C8]">
           Payment Pack {packId} &nbsp;|&nbsp; Issued {issueDate}
         </p>
-        {pageNum && (
-          <p className="text-[7px] text-[#6F7472]">
-            Page {pageNum} of {totalPages}
-          </p>
-        )}
+        <p className="text-[10px] text-[#8FA8C8]">Owens For Scrap</p>
       </div>
     </div>
   );
