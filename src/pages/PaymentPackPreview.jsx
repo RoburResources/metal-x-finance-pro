@@ -7,17 +7,23 @@ import GrandSummaryPreview from "@/components/pdf/GrandSummaryPreview";
 import PDFSettingsPanel from "@/components/pdf/PDFSettingsPanel";
 import ValidationBanner from "@/components/pdf/ValidationBanner";
 import { Button } from "@/components/ui/button";
-import { Download, FileText, Printer, Settings2 } from "lucide-react";
+import { Download, FileText, Printer, Settings2, Loader2 } from "lucide-react";
+import { generatePackPDF } from "@/lib/generatePackPDF";
 
 export default function PaymentPackPreview() {
   const [selectedPackId, setSelectedPackId] = useState("00103");
   const [settings, setSettings] = useState(defaultSettings);
   const [showSettings, setShowSettings] = useState(false);
+  const [generatingPDF, setGeneratingPDF] = useState(false);
 
   const selectedPack = paymentPacks.find((p) => p.id === selectedPackId);
 
   const handlePrint = () => window.print();
-  const handleDownloadPDF = () => window.print();
+  const handleDownloadPDF = async () => {
+    setGeneratingPDF(true);
+    await generatePackPDF(selectedPackId === "grand" ? "GrandSummary" : selectedPackId);
+    setGeneratingPDF(false);
+  };
 
   return (
     <>
@@ -99,10 +105,15 @@ export default function PaymentPackPreview() {
                 <Button
                   size="sm"
                   onClick={handleDownloadPDF}
-                  className="text-[11px] bg-[#1E4D99] hover:bg-[#12305C] text-white"
+                  disabled={generatingPDF}
+                  className="text-[11px] bg-[#1E4D99] hover:bg-[#12305C] text-white disabled:opacity-70"
                 >
-                  <Download className="w-3.5 h-3.5 mr-1.5" />
-                  Download PDF
+                  {generatingPDF ? (
+                    <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+                  ) : (
+                    <Download className="w-3.5 h-3.5 mr-1.5" />
+                  )}
+                  {generatingPDF ? "Generating…" : "Download PDF"}
                 </Button>
               </div>
             </div>
