@@ -10,13 +10,13 @@ export default function PackSelector({ selectedPackId, onSelect, onSelectGrand }
           onClick={() => onSelect(pack.id)}
           className={`px-4 py-2 rounded text-[11px] font-semibold tracking-wide transition-all ${
             selectedPackId === pack.id
-              ? "bg-[#0B1929] text-white shadow-lg"
-              : "bg-white text-[#08111F] border border-[#D9DEE7] hover:border-[#1E4D99] hover:text-[#1E4D99]"
+              ? "bg-[#0D1F3C] text-white shadow"
+              : "bg-white text-[#0D1F3C] border border-[#D1D9E6] hover:border-[#0D1F3C]"
           }`}
         >
           Pack {pack.id}
           <span className={`ml-2 text-[9px] font-normal ${
-            selectedPackId === pack.id ? "text-[#D9DEE7]" : "text-[#6F7472]"
+            selectedPackId === pack.id ? "text-[#8FA8C8]" : "text-[#6B7280]"
           }`}>
             {pack.status}
           </span>
@@ -26,8 +26,8 @@ export default function PackSelector({ selectedPackId, onSelect, onSelectGrand }
         onClick={onSelectGrand}
         className={`px-4 py-2 rounded text-[11px] font-semibold tracking-wide transition-all ${
           selectedPackId === "grand"
-            ? "bg-[#1E4D99] text-white shadow-lg"
-            : "bg-white text-[#08111F] border border-[#D9DEE7] hover:border-[#1E4D99] hover:text-[#1E4D99]"
+            ? "bg-[#0D1F3C] text-white shadow"
+            : "bg-white text-[#0D1F3C] border border-[#D1D9E6] hover:border-[#0D1F3C]"
         }`}
       >
         Grand Summary

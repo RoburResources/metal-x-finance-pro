@@ -1,78 +1,87 @@
 import React from "react";
+import { supplierDetails, companyDetails } from "@/lib/paymentPackData";
 
 const fmt = (v) =>
   `$${v.toLocaleString("en-AU", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 export default function PaymentSummaryTable({ pack }) {
+  const s = pack.summary;
+
   return (
-    <div className="px-8 pb-6">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="h-px flex-1 bg-[#D9DEE7]" />
-        <p className="text-[9px] font-bold text-[#1E4D99] uppercase tracking-[0.12em]">Payment Summary</p>
-        <div className="h-px flex-1 bg-[#D9DEE7]" />
-      </div>
+    <div className="px-8 pb-5">
+      <div className="border-t border-[#E2E8F0] mb-5" />
 
-      <div className="border border-[#D9DEE7] rounded-lg overflow-hidden">
-        {/* Header */}
-        <div className="grid grid-cols-7 bg-[#F8FAFC] px-5 py-3 border-b border-[#D9DEE7]">
-          <Col className="col-span-2">Job Ref</Col>
-          <Col>Type</Col>
-          <Col>Material</Col>
-          <Col right>Tonnes</Col>
-          <Col right>Gross</Col>
-          <Col right>Net Payable</Col>
+      {/* RCTI Section */}
+      <p className="text-[9px] font-bold text-[#6B7280] uppercase tracking-[0.1em] mb-3">RCTI Section</p>
+      <table className="w-full text-[10px] border-collapse mb-5">
+        <tbody>
+          <RctiRow label="Supplier" value={`${supplierDetails.legalName} — ABN ${supplierDetails.abn}`} />
+          <RctiRow label="Recipient / payer" value={`${companyDetails.name} — ABN ${companyDetails.abn}`} />
+          <RctiRow label="Payment pack" value={pack.id} />
+          <RctiRow label="GST treatment" value="GST inclusive" />
+          <RctiRow label="Weekly total" value={fmt(s.calculatedNetPayable)} />
+          <RctiRow label="Declaration wording" value="[NEEDS CONFIRMATION] Exact RCTI legal declaration wording not supplied." />
+        </tbody>
+      </table>
+
+      {/* Payment Summary */}
+      <p className="text-[9px] font-bold text-[#6B7280] uppercase tracking-[0.1em] mb-3">Payment Summary</p>
+      <table className="w-full text-[10px] border-collapse">
+        <thead>
+          <tr className="bg-[#0D1F3C] text-white">
+            <th className="px-3 py-2 text-left font-semibold text-[9px] uppercase tracking-[0.06em]">Metric</th>
+            <th className="px-3 py-2 text-right font-semibold text-[9px] uppercase tracking-[0.06em]">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <SummaryRow label={`Total payable tonnes`} value={`${s.totalPayableTonnes.toFixed(3)} t`} />
+          <SummaryRow label="Material value incl. GST" value={fmt(s.totalMaterialValue)} />
+          <SummaryRow label="Transport deductions incl. GST" value={`–${fmt(s.totalTransportDeductions)}`} />
+          <SummaryRow label="Alkimos service charges incl. GST" value={s.alkimosServiceCharges > 0 ? `–${fmt(s.alkimosServiceCharges)}` : "$0.00"} />
+          <SummaryRow label="Final net payable incl. GST" value={fmt(s.calculatedNetPayable)} bold />
+          {pack.remittance && (
+            <SummaryRow label="Remittance paid amount" value={fmt(pack.remittance.paidAmount)} />
+          )}
+          {pack.remittance?.bankReference && (
+            <SummaryRow label="Remittance reference" value={pack.remittance.bankReference} />
+          )}
+          <SummaryRow label="Payment status" value={pack.statusNote} bold />
+        </tbody>
+      </table>
+
+      {/* Remittance evidence for paid packs */}
+      {pack.remittance && pack.status === "Paid" && (
+        <div className="mt-4">
+          <p className="text-[9px] font-bold text-[#6B7280] uppercase tracking-[0.1em] mb-2">Remittance Evidence</p>
+          <table className="w-full text-[10px] border-collapse">
+            <tbody>
+              {pack.remittance.paymentSource && <SummaryRow label="Payment source" value={pack.remittance.paymentSource} />}
+              {pack.remittance.paidAmount && <SummaryRow label="Paid amount" value={fmt(pack.remittance.paidAmount)} />}
+              {pack.remittance.paidDateTime && <SummaryRow label="Paid date/time" value={pack.remittance.paidDateTime} />}
+              {pack.remittance.paidTo && <SummaryRow label="Paid to" value={pack.remittance.paidTo} />}
+              {pack.remittance.bankReference && <SummaryRow label="Bank reference" value={pack.remittance.bankReference} />}
+            </tbody>
+          </table>
         </div>
-
-        {/* Rows */}
-        {pack.jobs.map((job) => (
-          <div key={job.jobRef} className="grid grid-cols-7 px-5 py-3 border-b border-[#F1F5F9]">
-            <span className="col-span-2 text-[11px] font-medium text-[#1A2840]">{job.jobRef}</span>
-            <span className="text-[10px] text-[#6B7280]">Weighed</span>
-            <span className="text-[11px] text-[#1A2840]">{job.material}</span>
-            <span className="text-[11px] text-[#1A2840] text-right">{job.tonnes.toFixed(2)}</span>
-            <span className="text-[11px] text-[#1A2840] text-right">{fmt(job.grossValue)}</span>
-            <span className="text-[11px] font-medium text-[#1A2840] text-right">{fmt(job.netPayable)}</span>
-          </div>
-        ))}
-        {pack.alkimosJobs.map((job) => (
-          <div key={job.jobRef} className="grid grid-cols-7 px-5 py-3 border-b border-[#F1F5F9]">
-            <span className="col-span-2 text-[11px] font-medium text-[#1A2840]">{job.jobRef}</span>
-            <span className="text-[10px] text-[#6B7280]">Bin Service</span>
-            <span className="text-[11px] text-[#6B7280]">—</span>
-            <span className="text-[11px] text-[#6B7280] text-right">—</span>
-            <span className="text-[11px] text-[#1A2840] text-right">{fmt(job.serviceCharge)}</span>
-            <span className="text-[11px] font-medium text-[#1A2840] text-right">{fmt(job.serviceCharge)}</span>
-          </div>
-        ))}
-
-        {/* Total row */}
-        <div className="grid grid-cols-7 px-5 py-3.5 bg-[#F8FAFC] border-t border-[#D9DEE7]">
-          <span className="col-span-2 text-[11px] font-bold text-[#0D1F3C]">Total — Pack {pack.id}</span>
-          <span className="text-[10px] text-[#6B7280]"></span>
-          <span className="text-[11px] text-[#6B7280]"></span>
-          <span className="text-[11px] font-bold text-[#0D1F3C] text-right">
-            {pack.summary.totalPayableTonnes.toFixed(2)}
-          </span>
-          <span className="text-[11px] font-bold text-[#0D1F3C] text-right">
-            {fmt(pack.summary.totalMaterialValue + pack.summary.alkimosServiceCharges)}
-          </span>
-          <span className="text-[11px] font-bold text-[#0D1F3C] text-right">
-            {fmt(pack.summary.calculatedNetPayable)}
-          </span>
-        </div>
-      </div>
-
-      <p className="text-[10px] text-[#6B7280] mt-2">
-        All values incl. GST &nbsp;|&nbsp; Payable by Metal X Renewables to Owens For Scrap
-      </p>
+      )}
     </div>
   );
 }
 
-function Col({ children, right, className }) {
+function RctiRow({ label, value }) {
   return (
-    <p className={`text-[9px] font-bold text-[#6B7280] uppercase tracking-[0.08em] ${right ? "text-right" : ""} ${className || ""}`}>
-      {children}
-    </p>
+    <tr className="border border-[#E2E8F0]">
+      <td className="px-3 py-2 text-[#4A5568] w-[35%]">{label}</td>
+      <td className="px-3 py-2 text-[#0D1F3C] text-right">{value}</td>
+    </tr>
+  );
+}
+
+function SummaryRow({ label, value, bold }) {
+  return (
+    <tr className="border border-[#E2E8F0]">
+      <td className={`px-3 py-2 ${bold ? "font-bold text-[#0D1F3C]" : "text-[#4A5568]"} w-[60%]`}>{label}</td>
+      <td className={`px-3 py-2 text-right ${bold ? "font-bold text-[#0D1F3C]" : "text-[#0D1F3C]"}`}>{value}</td>
+    </tr>
   );
 }

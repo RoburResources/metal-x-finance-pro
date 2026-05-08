@@ -1,98 +1,68 @@
 import React from "react";
 
+const fmt = (v) =>
+  v != null
+    ? `$${v.toLocaleString("en-AU", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+    : "—";
+
 export default function ExecutiveSummary({ pack }) {
   const s = pack.summary;
-  const fmt = (v) =>
-    v != null
-      ? `$${v.toLocaleString("en-AU", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-      : "—";
 
   return (
-    <div className="px-8 pb-6">
-      {/* About this pack */}
-      <div className="border border-[#D9DEE7] rounded-lg p-5 mb-4">
-        <p className="text-[9px] font-bold text-[#1E4D99] uppercase tracking-[0.1em] mb-2">
-          About This Payment Pack
-        </p>
-        <p className="text-[11px] text-[#4A5568] leading-relaxed">
-          Metal X Renewables has prepared this payment pack for scrap metal collections supplied by Owens For Scrap
-          during the {pack.period}. This pack covers {s.weighedMaterialJobs} weighed material
-          {s.weighedMaterialJobs !== 1 ? " jobs" : " job"}
-          {s.binServiceJobs > 0 ? ` and ${s.binServiceJobs} Alkimos bin service job${s.binServiceJobs !== 1 ? "s" : ""}` : ""}.
-          All values include GST. Final amounts are subject to docket and DMT/GMT certificate confirmation.
-        </p>
-      </div>
+    <div className="px-8 pb-5">
+      <div className="border-b border-[#E2E8F0] mb-4" />
 
-      {/* Financial summary card */}
-      <div className="border border-[#D9DEE7] rounded-lg overflow-hidden mb-4">
-        {/* Header row */}
-        <div className="px-5 py-3 border-b border-[#D9DEE7] bg-[#F8FAFC]">
-          <div className="flex justify-between">
-            <p className="text-[9px] font-bold text-[#6B7280] uppercase tracking-[0.08em]">Description</p>
-            <p className="text-[9px] font-bold text-[#6B7280] uppercase tracking-[0.08em]">Amount (Incl. GST)</p>
-          </div>
-        </div>
+      <p className="text-[9px] font-bold text-[#6B7280] uppercase tracking-[0.1em] mb-3">Executive Summary</p>
 
-        {/* Rows */}
-        <div className="px-5 py-1">
-          <Row
-            label={`Material value — ${s.weighedMaterialJobs} collection${s.weighedMaterialJobs !== 1 ? "s" : ""}, ${s.totalPayableTonnes.toFixed(2)} t`}
-            value={fmt(s.totalMaterialValue)}
-            bold
+      <table className="w-full text-[10px] border-collapse mb-4">
+        <tbody>
+          <SummaryRow label="Payment pack" value={pack.id} label2="Payment status" value2={pack.statusNote} />
+          <SummaryRow
+            label="Weighed material jobs"
+            value={s.weighedMaterialJobs}
+            label2="Bin service jobs"
+            value2={s.binServiceJobs}
           />
-          <Row
-            label="Less: transport deductions"
+          <SummaryRow
+            label="Payable tonnes"
+            value={`${s.totalPayableTonnes.toFixed(3)} t`}
+            label2="Material value incl. GST"
+            value2={fmt(s.totalMaterialValue)}
+          />
+          <SummaryRow
+            label="Transport deductions incl. GST"
             value={`–${fmt(s.totalTransportDeductions)}`}
-            muted
+            label2="Alkimos charges incl. GST"
+            value2={s.alkimosServiceCharges > 0 ? `–${fmt(s.alkimosServiceCharges)}` : "$0.00"}
           />
-          {s.alkimosServiceCharges > 0 && (
-            <Row
-              label="Alkimos bin service charges"
-              value={fmt(s.alkimosServiceCharges)}
-            />
-          )}
-        </div>
+          <tr className="border border-[#E2E8F0] bg-[#F8FAFC]">
+            <td className="px-3 py-2.5 font-bold text-[#0D1F3C]">Final net payable incl. GST</td>
+            <td className="px-3 py-2.5" />
+            <td className="px-3 py-2.5" />
+            <td className="px-3 py-2.5 font-bold text-[#0D1F3C] text-right">
+              {fmt(s.calculatedNetPayable)}
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
-        {/* Net payable — dark navy block */}
-        <div className="bg-[#0D1F3C] px-5 py-4 flex justify-between items-end mt-1">
-          <div>
-            <p className="text-[11px] font-bold text-[#4A90D9]">
-              Net Payable to Owens For Scrap
-            </p>
-            <p className="text-[9px] text-[#8FA8C8] mt-0.5">
-              {pack.status === "Paid" ? "Payment has been made — reference only." : "Outstanding — payable by Metal X."}
-            </p>
-          </div>
-          <p className="text-[24px] font-bold text-white leading-none">
-            {s.remittancePaid != null && pack.status === "Paid"
-              ? fmt(s.remittancePaid)
-              : fmt(s.calculatedNetPayable)}
-          </p>
-        </div>
-      </div>
-
-      {/* Conflict notice */}
       {s.conflictNote && (
-        <div className="border border-[#D9DEE7] rounded-lg p-5">
-          <p className="text-[9px] font-bold text-[#1E4D99] uppercase tracking-[0.1em] mb-2">
-            Calculation Conflict
-          </p>
-          <p className="text-[11px] text-[#4A5568] leading-relaxed">{s.conflictNote}</p>
+        <div className="border border-[#FCA5A5] bg-[#FFF5F5] rounded p-3 mt-2">
+          <p className="text-[9px] font-bold text-[#DC2626] uppercase tracking-[0.08em] mb-1">Calculation Conflict — Reference</p>
+          <p className="text-[10px] text-[#7F1D1D]">{s.conflictNote}</p>
         </div>
       )}
     </div>
   );
 }
 
-function Row({ label, value, muted, bold }) {
+function SummaryRow({ label, value, label2, value2 }) {
   return (
-    <div className="flex justify-between items-center py-2.5 border-b border-[#F1F5F9] last:border-0">
-      <span className={`text-[11px] ${muted ? "text-[#6B7280]" : "text-[#1A2840]"}`}>
-        {label}
-      </span>
-      <span className={`text-[11px] ${bold ? "font-bold text-[#1A2840]" : muted ? "text-[#6B7280]" : "text-[#1A2840]"}`}>
-        {value}
-      </span>
-    </div>
+    <tr className="border border-[#E2E8F0]">
+      <td className="px-3 py-2 text-[#4A5568] w-[28%]">{label}</td>
+      <td className="px-3 py-2 text-[#0D1F3C] w-[22%]">{value}</td>
+      <td className="px-3 py-2 text-[#4A5568] w-[28%]">{label2}</td>
+      <td className="px-3 py-2 text-[#0D1F3C] text-right w-[22%]">{value2}</td>
+    </tr>
   );
 }
